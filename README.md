@@ -38,8 +38,23 @@ Node.js가 없는 경우 WSL2 터미널에서:
 ```bash
 sudo apt update && sudo apt install -y nodejs
 ```
-<img width="1422" height="893" alt="image" src="https://github.com/user-attachments/assets/72b4646b-93be-4f7b-a6ad-fcd2496ed530" />
+1) WSL2 터미널 열기
+예: Ubuntu 실행
 
+2) Git 설치 확인
+git --version
+만약 없으면 설치:
+sudo apt update
+sudo apt install git -y
+
+3) 원하는 폴더로 이동
+예를 들어 홈 디렉터리에서 작업:
+cd ~
+
+4) 저장소 복사(clone)
+git clone https://github.com/SeunghunLee0725/kims_ai.git
+
+그러면 현재 위치에 kims_ai 폴더가 생깁니다.
 ---
 
 ## 설정 절차
