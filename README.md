@@ -116,7 +116,7 @@ node ~/kims-ai-proxy/api-proxy.js
 WSL 터미널을 열지 않아도 Windows 부팅 시 프록시가 자동으로 시작되게 하려면:
 
 **방법 1: 자동 등록 스크립트 사용 (권장)**
-1. Windows 탐색기에서 `\\wsl$\Ubuntu-22.04\home\<사용자명>\shlee\20260331_vscode` 접속
+1. Windows 탐색기에서 `\\wsl$\Ubuntu-22.04\home\<사용자명>\<해당폴더>` 접속
 2. `install-windows-autostart.bat` 더블클릭
 3. 완료 메시지 확인 후 재부팅 시 자동 시작
 
