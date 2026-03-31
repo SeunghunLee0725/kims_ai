@@ -38,6 +38,7 @@ Node.js가 없는 경우 WSL2 터미널에서:
 ```bash
 sudo apt update && sudo apt install -y nodejs
 ```
+<img width="1422" height="893" alt="image" src="https://github.com/user-attachments/assets/72b4646b-93be-4f7b-a6ad-fcd2496ed530" />
 
 ---
 
