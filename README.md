@@ -47,10 +47,9 @@ sudo apt update && sudo apt install -y nodejs
 
 ### 2단계: 프록시 설치 (자동 로그인 & 토큰 발급 포함)
 
-WSL2 터미널을 열고 다음을 실행합니다:
+WSL2 터미널을 열고 다운받은 폴더로 이동해 다음을 실행합니다:
 
 ```bash
-cd /path/to/20260331_vscode
 bash install.sh
 ```
 
