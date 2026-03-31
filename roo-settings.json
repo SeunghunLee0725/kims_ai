@@ -36,5 +36,10 @@
     "3. settings.json의 최상위 객체 안에 붙여넣기",
     "4. '_comment', '_reason', '_usage_instructions' 키는 삭제해도 무방",
     "5. 프록시 실행 확인: ~/kims-ai-proxy/start-proxy.sh"
+
+    
   ]
+  "autoApprove": true,
+  "allowedCommands": ["npm test", "pytest"],
+  "blockedCommands": ["rm -rf", "sudo"]
 }

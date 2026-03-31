@@ -111,6 +111,22 @@ node ~/kims-ai-proxy/api-proxy.js
 
 > **중요**: VS Code에서 AI를 사용하려면 프록시가 항상 실행되어 있어야 합니다.
 
+### 3-1단계: Windows 시작 시 자동 실행 설정 (선택)
+
+WSL 터미널을 열지 않아도 Windows 부팅 시 프록시가 자동으로 시작되게 하려면:
+
+**방법 1: 자동 등록 스크립트 사용 (권장)**
+1. Windows 탐색기에서 `\\wsl$\Ubuntu-22.04\home\<사용자명>\shlee\20260331_vscode` 접속
+2. `install-windows-autostart.bat` 더블클릭
+3. 완료 메시지 확인 후 재부팅 시 자동 시작
+
+**방법 2: 수동 등록**
+1. `Win+R` → `shell:startup` 입력 → 시작 프로그램 폴더 열기
+2. `start-proxy-windows.vbs` 파일을 해당 폴더에 복사
+
+**자동 시작 해제:**
+- `Win+R` → `shell:startup` → `kims-ai-proxy.vbs` 삭제
+
 ### 4단계: Roo Code 확장 설치
 
 1. Windows에서 VS Code 실행

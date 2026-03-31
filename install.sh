@@ -177,6 +177,22 @@ else
     echo "[참고] 수동으로 시작하려면: ~/kims-ai-proxy/start-proxy.sh"
 fi
 
+# --- 9. Windows 자동 시작 안내 ---
+echo ""
+echo "--------------------------------------------"
+echo "  Windows 시작 시 자동 실행 설정 (선택)"
+echo "--------------------------------------------"
+echo ""
+echo "  WSL 터미널 없이 Windows 부팅 시 자동으로 프록시를 시작하려면:"
+echo "  Windows에서 다음 파일을 더블클릭하세요:"
+echo ""
+echo "  \\\\wsl\$\\Ubuntu-22.04\\home\\$(whoami)\\shlee\\20260331_vscode\\install-windows-autostart.bat"
+echo ""
+echo "  또는 수동으로:"
+echo "  1. Win+R → shell:startup 입력 → 시작 프로그램 폴더 열기"
+echo "  2. start-proxy-windows.vbs 파일을 해당 폴더에 복사"
+echo ""
+
 # --- 완료 ---
 echo ""
 echo "============================================"
