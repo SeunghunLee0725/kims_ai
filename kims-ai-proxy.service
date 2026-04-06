@@ -1,0 +1,17 @@
+[Unit]
+Description=KIMS AI Proxy (OpenCode → openchat.kims.re.kr)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=seunghun
+WorkingDirectory=/home/seunghun/kims-ai-proxy
+Environment=KIMS_EMAIL=seunghun@kims.re.kr
+Environment=KIMS_PASSWORD=freetree6
+ExecStart=/usr/bin/node /home/seunghun/kims-ai-proxy/api-proxy.js
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

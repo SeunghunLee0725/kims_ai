@@ -262,7 +262,7 @@ const server = http.createServer((req, res) => {
         // - temperature=0 또는 0.01 불가, 오직 1만 허용
         // - top_p 미지원 → 제거
         // - frequency_penalty, presence_penalty 미지원 → 제거
-        // - stream_options 미지원 → 제거
+        // - stream_options, reasoningSummary 미지원 → 제거
         if (isGpt54Reasoning) {
           if (json.temperature !== undefined) {
             json.temperature = 1;
@@ -271,15 +271,19 @@ const server = http.createServer((req, res) => {
           delete json.frequency_penalty;
           delete json.presence_penalty;
           delete json.stream_options;
+          delete json.reasoningSummary;
+          delete json.tools;
+          delete json.tool_choice;
         }
 
         // ── GPT-5.4-none (reasoning_effort=none) ────────────────────────────
         // - frequency_penalty, presence_penalty 미지원 → 제거
-        // - stream_options 미지원 → 제거
+        // - stream_options, reasoningSummary 미지원 → 제거
         if (isGpt54 && !isGpt54Reasoning) {
           delete json.frequency_penalty;
           delete json.presence_penalty;
           delete json.stream_options;
+          delete json.reasoningSummary;
         }
 
         // ── Perplexity 계열 ──────────────────────────────────────────────────
