@@ -1,0 +1,137 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "kims": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "KIMS AI",
+      "options": {
+        "baseURL": "http://localhost:4000/api/v1",
+        "apiKey": "sk-dummy"
+      },
+      "models": {
+        "claude-sonnet-4-6": {
+          "name": "Claude Sonnet 4.6",
+          "attachment": true,
+          "reasoning": false,
+          "temperature": true,
+          "tool_call": true,
+          "limit": {
+            "context": 200000,
+            "output": 8192
+          }
+        },
+        "claude-opus-4-6": {
+          "name": "Claude Opus 4.6",
+          "attachment": true,
+          "reasoning": false,
+          "temperature": true,
+          "tool_call": true,
+          "limit": {
+            "context": 200000,
+            "output": 8192
+          }
+        },
+        "claude-haiku": {
+          "name": "Claude Haiku",
+          "attachment": true,
+          "reasoning": false,
+          "temperature": true,
+          "tool_call": true,
+          "limit": {
+            "context": 200000,
+            "output": 8192
+          }
+        },
+        "gpt-5.4-xhigh": {
+          "name": "GPT-5.4 XHigh",
+          "attachment": true,
+          "reasoning": true,
+          "temperature": false,
+          "tool_call": true,
+          "limit": {
+            "context": 128000,
+            "output": 16384
+          }
+        },
+        "gpt-5.4-high": {
+          "name": "GPT-5.4 High",
+          "attachment": true,
+          "reasoning": true,
+          "temperature": false,
+          "tool_call": true,
+          "limit": {
+            "context": 128000,
+            "output": 16384
+          }
+        },
+        "gpt-5.4-medium": {
+          "name": "GPT-5.4 Medium",
+          "attachment": true,
+          "reasoning": true,
+          "temperature": false,
+          "tool_call": true,
+          "limit": {
+            "context": 128000,
+            "output": 16384
+          }
+        },
+        "gpt-5.4-low": {
+          "name": "GPT-5.4 Low",
+          "attachment": true,
+          "reasoning": true,
+          "temperature": false,
+          "tool_call": true,
+          "limit": {
+            "context": 128000,
+            "output": 16384
+          }
+        },
+        "gpt-5.4-none": {
+          "name": "GPT-5.4 None",
+          "attachment": true,
+          "reasoning": false,
+          "temperature": true,
+          "tool_call": true,
+          "limit": {
+            "context": 128000,
+            "output": 16384
+          }
+        },
+        "perplexity-sonar-pro": {
+          "name": "Perplexity Sonar Pro",
+          "attachment": false,
+          "reasoning": false,
+          "temperature": true,
+          "tool_call": false,
+          "limit": {
+            "context": 127072,
+            "output": 8192
+          }
+        },
+        "perplexity-sonar-reasoning": {
+          "name": "Perplexity Sonar Reasoning",
+          "attachment": false,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": false,
+          "limit": {
+            "context": 127072,
+            "output": 8192
+          }
+        },
+        "perplexity-sonar": {
+          "name": "Perplexity Sonar",
+          "attachment": false,
+          "reasoning": false,
+          "temperature": true,
+          "tool_call": false,
+          "limit": {
+            "context": 127072,
+            "output": 8192
+          }
+        }
+      }
+    }
+  },
+  "model": "kims/claude-sonnet-4-6"
+}
