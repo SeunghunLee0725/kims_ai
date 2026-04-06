@@ -7,6 +7,7 @@
 set -e
 
 INSTALL_DIR="$HOME/kims-ai-proxy"
+ENV_FILE="$HOME/.kims-ai-proxy.env"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 OPENCHAT_URL="http://openchat.kims.re.kr"
 
@@ -41,17 +42,19 @@ echo "[설치] $INSTALL_DIR 디렉토리 생성"
 cp "$SCRIPT_DIR/api-proxy.js" "$INSTALL_DIR/api-proxy.js"
 echo "[설치] api-proxy.js 복사 완료"
 
-# --- 5. openchat.kims.re.kr 로그인 및 API 토큰 발급 ---
+# --- 5. openchat.kims.re.kr 로그인 및 자격증명 저장 ---
 echo ""
 echo "============================================"
 echo "  openchat.kims.re.kr 로그인"
 echo "============================================"
 echo ""
-echo "  AI 서비스에 로그인하여 API 토큰을 발급받습니다."
+echo "  이메일/비밀번호를 저장하면 토큰 만료 시 자동으로 갱신됩니다."
 echo "  (계정이 없으면 먼저 $OPENCHAT_URL 에서 회원가입하세요)"
 echo ""
 
-API_TOKEN=""
+SAVED_EMAIL=""
+SAVED_PASS=""
+LOGIN_OK=false
 
 # 로그인 시도 (최대 3회)
 for attempt in 1 2 3; do
@@ -89,66 +92,69 @@ for attempt in 1 2 3; do
     fi
 
     echo "[성공] 로그인 완료"
-
-    # API 키 조회 (이미 생성된 키가 있는지 확인)
-    echo "[토큰] API 토큰을 가져오는 중..."
-    API_KEY_RESULT=$(curl -s --max-time 10 \
-        "$OPENCHAT_URL/api/v1/auths/api_key" \
-        -H "Authorization: Bearer $LOGIN_TOKEN" 2>&1)
-
-    EXISTING_KEY=$(echo "$API_KEY_RESULT" | grep -o '"api_key":"[^"]*"' | head -1 | cut -d'"' -f4)
-
-    if [ -n "$EXISTING_KEY" ] && [ "$EXISTING_KEY" != "null" ]; then
-        API_TOKEN="$EXISTING_KEY"
-        echo "[성공] API 토큰을 가져왔습니다."
-    else
-        # 기존 키가 없으면 로그인 토큰 자체를 사용
-        # (Open WebUI에서는 로그인 토큰도 API 인증에 사용 가능)
-        API_TOKEN="$LOGIN_TOKEN"
-        echo "[성공] 로그인 토큰을 API 토큰으로 사용합니다."
-    fi
+    SAVED_EMAIL="$USER_EMAIL"
+    SAVED_PASS="$USER_PASS"
+    LOGIN_OK=true
     break
 done
 
-# 로그인 실패 시 수동 입력 안내
-if [ -z "$API_TOKEN" ]; then
-    echo ""
-    echo "--------------------------------------------"
-    echo "  수동 API 토큰 설정"
-    echo "--------------------------------------------"
-    echo ""
-    echo "  로그인에 실패했거나 건너뛴 경우,"
-    echo "  웹 브라우저에서 직접 토큰을 발급받을 수 있습니다:"
-    echo ""
-    echo "  1. $OPENCHAT_URL 접속 후 로그인"
-    echo "  2. 좌측 하단 사용자 이름 클릭"
-    echo "  3. '설정(Settings)' 선택"
-    echo "  4. '계정(Account)' 탭 → 'API Keys'"
-    echo "  5. 'Create new secret key' 클릭"
-    echo "  6. 생성된 토큰(eyJ...로 시작)을 복사"
-    echo ""
-    read -rp "  API 토큰을 붙여넣으세요 (Enter로 건너뛰기): " API_TOKEN
-fi
-
-# 토큰 설정
-if [ -z "$API_TOKEN" ]; then
-    echo ""
-    echo "[참고] 토큰을 나중에 설정하려면:"
-    echo "  export KIMS_API_KEY='eyJ...' 를 실행하거나"
-    echo "  $INSTALL_DIR/api-proxy.js 파일을 직접 수정하세요."
+# --- 6. 자격증명 저장 (.env 파일) ---
+if [ "$LOGIN_OK" = true ]; then
+    # .env 파일에 이메일/비밀번호 저장 (토큰 자동 갱신용)
+    cat > "$ENV_FILE" << ENVEOF
+# KIMS AI 프록시 자격증명
+# 이 파일은 토큰 만료 시 자동 재로그인에 사용됩니다.
+# 파일 권한을 600으로 유지하세요 (소유자만 읽기/쓰기).
+KIMS_EMAIL='${SAVED_EMAIL}'
+KIMS_PASSWORD='${SAVED_PASS}'
+ENVEOF
+    chmod 600 "$ENV_FILE"
+    echo "[설정] 자격증명이 $ENV_FILE 에 저장되었습니다. (권한: 600)"
+    echo "       토큰 만료 시 프록시가 자동으로 재로그인합니다."
 else
-    # api-proxy.js 안의 기본값을 실제 토큰으로 교체
-    sed -i "s|여기에_API_토큰을_붙여넣으세요|${API_TOKEN}|g" \
-        "$INSTALL_DIR/api-proxy.js"
-    echo "[설정] API 토큰이 저장되었습니다."
+    echo ""
+    echo "--------------------------------------------"
+    echo "  수동 자격증명 설정"
+    echo "--------------------------------------------"
+    echo ""
+    echo "  로그인에 실패했거나 건너뛴 경우, 다음 중 하나를 선택하세요:"
+    echo ""
+    echo "  [방법 1] 이메일/비밀번호 저장 (자동 토큰 갱신 지원 — 권장):"
+    echo "    cat > $ENV_FILE << 'EOF'"
+    echo "    KIMS_EMAIL='your@email.com'"
+    echo "    KIMS_PASSWORD='yourpassword'"
+    echo "    EOF"
+    echo "    chmod 600 $ENV_FILE"
+    echo ""
+    echo "  [방법 2] API 토큰 직접 설정 (만료 시 수동 갱신 필요):"
+    echo "    1. $OPENCHAT_URL 접속 후 로그인"
+    echo "    2. 좌측 하단 사용자 이름 클릭 → 설정(Settings)"
+    echo "    3. 계정(Account) 탭 → API Keys → Create new secret key"
+    echo "    4. 생성된 토큰(eyJ...로 시작)을 복사 후:"
+    echo "       echo \"KIMS_API_KEY='eyJ...'\" >> $ENV_FILE"
+    echo "       chmod 600 $ENV_FILE"
+    echo ""
+    read -rp "  API 토큰을 지금 붙여넣으시겠습니까? (Enter로 건너뛰기): " MANUAL_TOKEN
+    if [ -n "$MANUAL_TOKEN" ]; then
+        cat > "$ENV_FILE" << ENVEOF
+# KIMS AI 프록시 자격증명
+# 토큰 만료 시 수동으로 갱신이 필요합니다.
+# 자동 갱신을 원하면 KIMS_EMAIL / KIMS_PASSWORD 를 추가하세요.
+KIMS_API_KEY='${MANUAL_TOKEN}'
+ENVEOF
+        chmod 600 "$ENV_FILE"
+        echo "[설정] API 토큰이 $ENV_FILE 에 저장되었습니다."
+    else
+        echo "[참고] 나중에 $ENV_FILE 파일을 직접 생성하여 설정하세요."
+    fi
 fi
 
-# --- 6. 시작 스크립트 복사 ---
+# --- 7. 시작 스크립트 복사 ---
 cp "$SCRIPT_DIR/start-proxy.sh" "$INSTALL_DIR/start-proxy.sh"
 chmod +x "$INSTALL_DIR/start-proxy.sh"
 echo "[설치] start-proxy.sh 복사 완료"
 
-# --- 7. 자동 시작 설정 (선택) ---
+# --- 8. 자동 시작 설정 (선택) ---
 echo ""
 read -rp "WSL 시작 시 프록시를 자동 실행하시겠습니까? (y/N): " AUTO_START
 
@@ -159,8 +165,8 @@ if [[ "$AUTO_START" =~ ^[Yy]$ ]]; then
 
 $BASHRC_LINE
 if ! pgrep -f "node.*api-proxy.js" > /dev/null 2>&1; then
-    node "$INSTALL_DIR/api-proxy.js" > /dev/null 2>&1 &
-    echo "[KIMS AI 프록시] 백그라운드에서 시작됨 (PID: \$!)"
+    "$INSTALL_DIR/start-proxy.sh" > /dev/null 2>&1 &
+    echo "[KIMS AI 프록시] 백그라운드에서 시작됨"
 fi
 RCEOF
         echo "[설정] ~/.bashrc에 자동 시작 등록 완료"
@@ -170,6 +176,22 @@ RCEOF
 else
     echo "[참고] 수동으로 시작하려면: ~/kims-ai-proxy/start-proxy.sh"
 fi
+
+# --- 9. Windows 자동 시작 안내 ---
+echo ""
+echo "--------------------------------------------"
+echo "  Windows 시작 시 자동 실행 설정 (선택)"
+echo "--------------------------------------------"
+echo ""
+echo "  WSL 터미널 없이 Windows 부팅 시 자동으로 프록시를 시작하려면:"
+echo "  Windows에서 다음 파일을 더블클릭하세요:"
+echo ""
+echo "  \\\\wsl\$\\Ubuntu-22.04\\home\\$(whoami)\\shlee\\20260331_vscode\\install-windows-autostart.bat"
+echo ""
+echo "  또는 수동으로:"
+echo "  1. Win+R → shell:startup 입력 → 시작 프로그램 폴더 열기"
+echo "  2. start-proxy-windows.vbs 파일을 해당 폴더에 복사"
+echo ""
 
 # --- 완료 ---
 echo ""
